@@ -27,10 +27,13 @@
 #ifndef CRYPTO3_TYPE_TRAITS_HPP
 #define CRYPTO3_TYPE_TRAITS_HPP
 
+// this is absent in block
 #ifndef TVM
 #include <complex>
 #endif
+// #include <type_traits> from pubkey
 
+// #ifndef GENERATE_HAS_MEMBER_TYPE //from pubkey
 #define GENERATE_HAS_MEMBER_TYPE(Type)                                                                                 \
     template<class T, typename Enable = void>                                                                          \
     class HasMemberType_##Type {                                                                                       \
@@ -60,7 +63,9 @@
                                                                                                                        \
     template<class T>                                                                                                  \
     struct has_##Type : public std::integral_constant<bool, HasMemberType_##Type<T>::RESULT> { };
+// #endif    // GENERATE_HAS_MEMBER_TYPE
 
+// #ifndef GENERATE_HAS_MEMBER //from pubkey
 #define GENERATE_HAS_MEMBER(member)                                                                                  \
     template<class T, typename Enable = void>                                                                        \
     class HasMember_##member {                                                                                       \
@@ -90,7 +95,9 @@
                                                                                                                      \
     template<class T>                                                                                                \
     struct has_##member : public std::integral_constant<bool, HasMember_##member<T>::RESULT> { };
+// #endif    // GENERATE_HAS_MEMBER
 
+// #ifndef GENERATE_HAS_MEMBER_FUNCTION //from pubkey
 #define GENERATE_HAS_MEMBER_FUNCTION(Function, ...)                                  \
                                                                                      \
     template<typename T>                                                             \
@@ -112,7 +119,9 @@
                                                                                      \
         static bool const value = sizeof(f<Derived>(0)) == 2;                        \
     };
+// #endif    // GENERATE_HAS_MEMBER_FUNCTION
 
+// #ifndef GENERATE_HAS_MEMBER_CONST_FUNCTION //from pubkey
 #define GENERATE_HAS_MEMBER_CONST_FUNCTION(Function, ...)                                  \
                                                                                            \
     template<typename T>                                                                   \
@@ -134,7 +143,9 @@
                                                                                            \
         static bool const value = sizeof(f<Derived>(0)) == 2;                              \
     };
+// #endif    // GENERATE_HAS_MEMBER_CONST_FUNCTION
 
+// #ifndef GENERATE_HAS_MEMBER_RETURN_FUNCTION from pubkey
 #define GENERATE_HAS_MEMBER_RETURN_FUNCTION(Function, ReturnType, ...)                       \
                                                                                              \
     template<typename T>                                                                     \
@@ -162,7 +173,9 @@
                                                                                              \
         static bool const value = sizeof(f<Derived>(0)) == 2;                                \
     };
+// #endif    // GENERATE_HAS_MEMBER_RETURN_FUNCTION
 
+// #ifndef GENERATE_HAS_MEMBER_CONST_RETURN_FUNCTION from pubkey
 #define GENERATE_HAS_MEMBER_CONST_RETURN_FUNCTION(Function, ReturnType, ...)                 \
                                                                                              \
     template<typename T>                                                                     \
@@ -190,10 +203,22 @@
                                                                                              \
         static bool const value = sizeof(f<Derived>(0)) == 2;                                \
     };
-
+// #endif    // GENERATE_HAS_MEMBER_CONST_RETURN_FUNCTION //from pubkey
 namespace nil {
     namespace crypto3 {
         namespace detail {
+            // from pubkey
+            // as C++20 is not used
+            //
+            template<class T>
+            struct unwrap_reference {
+                using type = T;
+            };
+            template<class U>
+            struct unwrap_reference<std::reference_wrapper<U>> {
+                using type = U &;
+            };
+            // end of from pubkey
             GENERATE_HAS_MEMBER_TYPE(iterator)
             GENERATE_HAS_MEMBER_TYPE(const_iterator)
 
@@ -205,6 +230,9 @@ namespace nil {
             GENERATE_HAS_MEMBER_TYPE(block_type)
             GENERATE_HAS_MEMBER_TYPE(digest_type)
             GENERATE_HAS_MEMBER_TYPE(key_type)
+            GENERATE_HAS_MEMBER_TYPE(secret_type)    // from kdf
+            GENERATE_HAS_MEMBER_TYPE(salt_type)      // from kdf
+            GENERATE_HAS_MEMBER_TYPE(label_type)     // from kdf
             GENERATE_HAS_MEMBER_TYPE(key_schedule_type)
             GENERATE_HAS_MEMBER_TYPE(word_type)
 
@@ -216,8 +244,11 @@ namespace nil {
             GENERATE_HAS_MEMBER(block_bits)
             GENERATE_HAS_MEMBER(digest_bits)
             GENERATE_HAS_MEMBER(key_bits)
-            GENERATE_HAS_MEMBER(min_key_bits)
-            GENERATE_HAS_MEMBER(max_key_bits)
+            GENERATE_HAS_MEMBER(min_key_bits)    // absent in kdf
+            GENERATE_HAS_MEMBER(max_key_bits)    // absent in kdf
+            GENERATE_HAS_MEMBER(secret_bits)     // from kdf
+            GENERATE_HAS_MEMBER(salt_bits)       // from kdf
+            GENERATE_HAS_MEMBER(label_bits)      // from kdf
             GENERATE_HAS_MEMBER(key_schedule_bits)
             GENERATE_HAS_MEMBER(word_bits)
 
@@ -226,8 +257,10 @@ namespace nil {
             GENERATE_HAS_MEMBER_CONST_RETURN_FUNCTION(begin, const_iterator)
             GENERATE_HAS_MEMBER_CONST_RETURN_FUNCTION(end, const_iterator)
 
-            GENERATE_HAS_MEMBER_RETURN_FUNCTION(encode, encoded_block_type);
-            GENERATE_HAS_MEMBER_RETURN_FUNCTION(decode, decoded_block_type);
+            GENERATE_HAS_MEMBER_RETURN_FUNCTION(
+                encode, encoded_block_type);    //     GENERATE_HAS_MEMBER_RETURN_FUNCTION(encode, block_type) //on kdf
+            GENERATE_HAS_MEMBER_RETURN_FUNCTION(
+                decode, decoded_block_type);    //     GENERATE_HAS_MEMBER_RETURN_FUNCTION(decode, block_type) //on kdf
 
             GENERATE_HAS_MEMBER_RETURN_FUNCTION(encrypt, block_type);
             GENERATE_HAS_MEMBER_RETURN_FUNCTION(decrypt, block_type);
@@ -235,15 +268,60 @@ namespace nil {
             GENERATE_HAS_MEMBER_FUNCTION(generate)
             GENERATE_HAS_MEMBER_CONST_FUNCTION(check)
 
+            GENERATE_HAS_MEMBER_TYPE(extension_policy)
+
+            GENERATE_HAS_MEMBER_TYPE(curve_type)
+
+            GENERATE_HAS_MEMBER_TYPE(underlying_field_type)
+
+            GENERATE_HAS_MEMBER_TYPE(value_type)
+
+            GENERATE_HAS_MEMBER_TYPE(integral_type)
+
+            GENERATE_HAS_MEMBER_TYPE(base_field_type)
+
+            GENERATE_HAS_MEMBER_TYPE(number_type)
+
+            GENERATE_HAS_MEMBER_TYPE(scalar_field_type)
+
+            GENERATE_HAS_MEMBER_TYPE(g1_type)
+
+            GENERATE_HAS_MEMBER_TYPE(g2_type)
+
+            GENERATE_HAS_MEMBER_TYPE(gt_type)
+
+            GENERATE_HAS_MEMBER(value_bits)
+
+            GENERATE_HAS_MEMBER(modulus_bits)
+
+            GENERATE_HAS_MEMBER(base_field_bits)
+
+            GENERATE_HAS_MEMBER(base_field_modulus)
+
+            GENERATE_HAS_MEMBER(scalar_field_bits)
+
+            GENERATE_HAS_MEMBER(scalar_field_modulus)
+
+            GENERATE_HAS_MEMBER(arity)
+
+            GENERATE_HAS_MEMBER(p)
+
+            GENERATE_HAS_MEMBER(q)
+
+            GENERATE_HAS_MEMBER_FUNCTION(to_affine_coordinates)
+
+            GENERATE_HAS_MEMBER_FUNCTION(to_special)
+
+            GENERATE_HAS_MEMBER_FUNCTION(is_special)
             template<typename T>
             struct is_iterator {
                 static char test(...);
 
                 template<typename U, typename = typename std::iterator_traits<U>::difference_type,
-                        typename = typename std::iterator_traits<U>::pointer,
-                        typename = typename std::iterator_traits<U>::reference,
-                        typename = typename std::iterator_traits<U>::value_type,
-                        typename = typename std::iterator_traits<U>::iterator_category>
+                         typename = typename std::iterator_traits<U>::pointer,
+                         typename = typename std::iterator_traits<U>::reference,
+                         typename = typename std::iterator_traits<U>::value_type,
+                         typename = typename std::iterator_traits<U>::iterator_category>
                 static long test(U &&);
 
                 constexpr static bool value = std::is_same<decltype(test(std::declval<T>())), long>::value;
@@ -251,14 +329,17 @@ namespace nil {
 
             template<typename Range>
             struct is_range {
-                static const bool value = has_iterator<Range>::value && has_begin<Range>::value && has_end<Range>::value;
+                // static const bool value = has_begin<Range>::value && has_end<Range>::value;
+                static const bool value =
+                    has_iterator<Range>::value && has_begin<Range>::value && has_end<Range>::value;
             };
 
             template<typename Container>
             struct is_container {
-                static const bool value =
-                        has_iterator<Container>::value && has_begin<Container>::value && has_end<Container>::value &&
-                        has_const_iterator<Container>::value && has_begin<Container>::value && has_end<Container>::value;
+                static const bool value = has_iterator<Container>::value && has_begin<Container>::value &&
+                                          has_end<Container>::value && has_const_iterator<Container>::value &&
+                                          has_begin<Container>::value && has_end<Container>::value;
+                // has_const_iterator<Container>::value && has_begin<Container>::value && has_end<Container>::value;
             };
 
             template<typename T>
@@ -273,11 +354,10 @@ namespace nil {
 
             template<typename T>
             struct is_block_cipher {
-                static const bool value =
-                        has_word_type<T>::value && has_word_bits<T>::value &&
-                        has_block_type<T>::value && has_block_bits<T>::value &&
-                        has_key_type<T>::value && has_key_bits<T>::value &&
-                        has_rounds<T>::value && has_encrypt<T>::value && has_decrypt<T>::value;
+                static const bool value = has_word_type<T>::value && has_word_bits<T>::value &&
+                                          has_block_type<T>::value && has_block_bits<T>::value &&
+                                          has_key_type<T>::value && has_key_bits<T>::value && has_rounds<T>::value &&
+                                          has_encrypt<T>::value && has_decrypt<T>::value;
                 typedef T type;
             };
 
@@ -310,19 +390,23 @@ namespace nil {
 
             template<typename T>
             struct is_mac {
-                static const bool value =
-                        has_digest_type<T>::value && has_digest_bits<T>::value &&
-                        has_block_type<T>::value && has_block_bits<T>::value &&
-                        has_key_type<T>::value && has_key_bits<T>::value;
+                static const bool value = has_digest_type<T>::value && has_digest_bits<T>::value &&
+                                          has_block_type<T>::value && has_block_bits<T>::value &&
+                                          has_key_type<T>::value && has_key_bits<T>::value;
                 typedef T type;
             };
 
             template<typename T>
-            struct is_kdf {
-                static const bool value =
-                        has_digest_type<T>::value && has_digest_bits<T>::value &&
-                        has_key_type<T>::value && has_max_key_bits<T>::value &&
-                        has_min_key_bits<T>::value;
+            struct is_kdf {    // from kdf
+                static const bool value = has_digest_type<T>::value && has_digest_bits<T>::value &&
+                                          has_secret_bits<T>::value && has_secret_type<T>::value &&
+                                          has_salt_bits<T>::value && has_salt_type<T>::value &&
+                                          has_label_bits<T>::value && has_label_type<T>::value;
+
+                // static const bool value =
+                //         has_digest_type<T>::value && has_digest_bits<T>::value &&
+                //         has_key_type<T>::value && has_max_key_bits<T>::value &&
+                //         has_min_key_bits<T>::value;
 
                 typedef T type;
             };
@@ -332,8 +416,60 @@ namespace nil {
                 static const bool value = has_generate<T>::value && has_check<T>::value;
                 typedef T type;
             };
+            template<typename T>
+            struct is_curve {
+                static const bool value =
+                    has_base_field_bits<T>::value && has_base_field_type<T>::value && has_number_type<T>::value &&
+                    has_base_field_modulus<T>::value && has_scalar_field_bits<T>::value &&
+                    has_scalar_field_type<T>::value && has_scalar_field_modulus<T>::value && has_g1_type<T>::value &&
+                    has_g2_type<T>::value && has_gt_type<T>::value && has_p<T>::value && has_q<T>::value;
+                typedef T type;
+            };
+
+            template<typename T>    // TODO: we should add some other params to curve group policy to identify it more
+                                    // clearly
+            struct is_curve_group {
+                static const bool value = has_value_type<T>::value && has_underlying_field_type<T>::value &&
+                                          has_value_bits<T>::value && has_curve_type<T>::value;
+                typedef T type;
+            };
+
+            template<typename T>
+            struct is_field {
+                static const bool value = has_value_type<T>::value && has_value_bits<T>::value &&
+                                          has_integral_type<T>::value && has_modulus_bits<T>::value &&
+                                          has_number_type<T>::value && has_arity<T>::value;
+                typedef T type;
+            };
+
+            template<typename T>
+            struct is_extended_field {
+                static const bool value = has_value_type<T>::value && has_value_bits<T>::value &&
+                                          has_integral_type<T>::value && has_modulus_bits<T>::value &&
+                                          has_number_type<T>::value && has_arity<T>::value &&
+                                          has_extension_policy<T>::value;
+                typedef T type;
+            };
+
+            template<typename T>
+            struct is_complex : std::false_type { };
+            template<typename T>
+            struct is_complex<std::complex<T>> : std::true_type { };
+            template<typename T>
+            constexpr bool is_complex_v = is_complex<T>::value;
+
+            template<typename T>
+            struct remove_complex {
+                using type = T;
+            };
+            template<typename T>
+            struct remove_complex<std::complex<T>> {
+                using type = T;
+            };
+            template<typename T>
+            using remove_complex_t = typename remove_complex<T>::type;
         }    // namespace detail
-    }        // namespace crypto3
+    }    // namespace crypto3
 }    // namespace nil
 
 #endif    // CRYPTO3_TYPE_TRAITS_HPP
