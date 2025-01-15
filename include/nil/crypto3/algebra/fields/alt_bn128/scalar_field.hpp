@@ -58,7 +58,8 @@ namespace nil {
 
                     constexpr static const integral_type modulus =
                         0x30644E72E131A029B85045B68181585D2833E84879B9709143E1F593F0000001_cppui254;
-
+                    constexpr static const integral_type group_order_minus_one_half =
+                        0x183227397098d014dc2822db40c0ac2e9419f4243cdcb848a1f0fac9f8000000_cppui254;
                     typedef typename policy_type::modular_backend modular_backend;
                     constexpr static const modular_params_type modulus_params = modulus;
                     typedef nil::crypto3::multiprecision::number<
