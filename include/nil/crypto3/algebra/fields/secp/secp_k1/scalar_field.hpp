@@ -46,8 +46,8 @@ namespace nil {
                 struct secp_k1_scalar_field;
 
                 template<>
-                struct secp_k1_scalar_field<160> : public field<160> {
-                    typedef field<160> policy_type;
+                struct secp_k1_scalar_field<160> : public field<161> {
+                    typedef field<161> policy_type;
 
                     constexpr static const std::size_t modulus_bits = policy_type::modulus_bits;
                     typedef typename policy_type::integral_type integral_type;
@@ -57,8 +57,8 @@ namespace nil {
                     constexpr static const std::size_t number_bits = policy_type::number_bits;
 
                     constexpr static const integral_type modulus =
-                        0x0100000000000000000001b8fa16dfab9aca16b6b3_cppui160;
-
+                        0x0100000000000000000001b8fa16dfab9aca16b6b3_cppui161;
+					constexpr static const integral_type group_order_minus_one_half = (modulus - 1) / 2;
                     typedef typename policy_type::modular_backend modular_backend;
                     constexpr static const modular_params_type modulus_params = modulus;
                     typedef nil::crypto3::multiprecision::number<
@@ -87,6 +87,8 @@ namespace nil {
                     constexpr static const integral_type modulus =
                         0xfffffffffffffffffffffffe26f2fc170f69466a74defd8d_cppui192;
 
+					constexpr static const integral_type group_order_minus_one_half = (modulus - 1) / 2;
+					
                     typedef typename policy_type::modular_backend modular_backend;
                     constexpr static const modular_params_type modulus_params = modulus;
                     typedef nil::crypto3::multiprecision::number<
@@ -102,8 +104,8 @@ namespace nil {
                 };
 
                 template<>
-                struct secp_k1_scalar_field<224> : public field<224> {
-                    typedef field<224> policy_type;
+                struct secp_k1_scalar_field<224> : public field<225> {
+                    typedef field<225> policy_type;
 
                     constexpr static const std::size_t modulus_bits = policy_type::modulus_bits;
                     typedef typename policy_type::integral_type integral_type;
@@ -113,8 +115,10 @@ namespace nil {
                     constexpr static const std::size_t number_bits = policy_type::number_bits;
 
                     constexpr static const integral_type modulus =
-                        0x010000000000000000000000000001dce8d2ec6184caf0a971769fb1f7_cppui224;
-
+                        0x010000000000000000000000000001dce8d2ec6184caf0a971769fb1f7_cppui225;
+						
+					constexpr static const integral_type group_order_minus_one_half = (modulus - 1) / 2;
+					
                     typedef typename policy_type::modular_backend modular_backend;
                     constexpr static const modular_params_type modulus_params = modulus;
                     typedef nil::crypto3::multiprecision::number<
@@ -123,7 +127,7 @@ namespace nil {
                             nil::crypto3::multiprecision::backends::modular_params_ct<modular_backend, modulus_params>>>
                         modular_type;
 
-                    typedef typename detail::element_fp<params<secp_k1_scalar_field<224>>> value_type;
+                    typedef typename detail::element_fp<params<secp_k1_scalar_field<225>>> value_type;
 
                     constexpr static const std::size_t value_bits = modulus_bits;
                     constexpr static const std::size_t arity = 1;
@@ -142,7 +146,9 @@ namespace nil {
 
                     constexpr static const integral_type modulus =
                         0xfffffffffffffffffffffffffffffffebaaedce6af48a03bbfd25e8cd0364141_cppui256;
-
+						
+					constexpr static const integral_type group_order_minus_one_half = (modulus - 1) / 2;
+					
                     typedef typename policy_type::modular_backend modular_backend;
                     constexpr static const modular_params_type modulus_params = modulus;
                     typedef nil::crypto3::multiprecision::number<

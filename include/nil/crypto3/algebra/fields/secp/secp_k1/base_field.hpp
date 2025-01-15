@@ -58,6 +58,8 @@ namespace nil {
 
                     constexpr static const integral_type modulus = 0xfffffffffffffffffffffffffffffffeffffac73_cppui160;
 
+					 constexpr static const integral_type group_order_minus_one_half = (modulus - 1) / 2;
+					 
                     typedef typename policy_type::modular_backend modular_backend;
                     constexpr static const modular_params_type modulus_params = modulus;
                     typedef nil::crypto3::multiprecision::number<
@@ -85,6 +87,8 @@ namespace nil {
 
                     constexpr static const integral_type modulus =
                         0xfffffffffffffffffffffffffffffffffffffffeffffee37_cppui192;
+						
+					 constexpr static const integral_type group_order_minus_one_half = (modulus - 1) / 2;
 
                     typedef typename policy_type::modular_backend modular_backend;
                     constexpr static const modular_params_type modulus_params = modulus;
@@ -113,6 +117,8 @@ namespace nil {
 
                     constexpr static const integral_type modulus =
                         0xfffffffffffffffffffffffffffffffffffffffffffffffeffffe56d_cppui224;
+						
+					 constexpr static const integral_type group_order_minus_one_half = (modulus - 1) / 2;
 
                     typedef typename policy_type::modular_backend modular_backend;
                     constexpr static const modular_params_type modulus_params = modulus;
@@ -141,6 +147,8 @@ namespace nil {
 
                     constexpr static const integral_type modulus =
                         0xfffffffffffffffffffffffffffffffffffffffffffffffffffffffefffffc2f_cppui256;
+						
+					 constexpr static const integral_type group_order_minus_one_half = (modulus - 1) / 2;
 
                     typedef typename policy_type::modular_backend modular_backend;
                     constexpr static const modular_params_type modulus_params = modulus;
